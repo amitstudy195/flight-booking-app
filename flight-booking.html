@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlightBook - Book Flights</title>
+    <link rel="stylesheet" href="flight-booking.css">
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                ✈️ FlightBook
+            </div>
+            <nav class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#destinations">Destinations</a>
+                <a href="#faq">FAQ</a>
+                <a href="#bookings" onclick="showMyBookings(event)" style="cursor: pointer;">📅 My Bookings</a>
+            </nav>
+            <div class="auth-buttons" id="authButtons">
+                <button class="login-btn" onclick="openLoginModal()">Login</button>
+                <button class="signup-btn" onclick="openSignupModal()">Sign Up</button>
+            </div>
+            <div class="user-profile" id="userProfile" style="display: none;">
+                <span id="userName"></span>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeLoginModal()">&times;</span>
+            <h2>Login to Your Account</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                </div>
+                <div class="remember-me">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Remember me</label>
+                </div>
+                <button type="submit" class="submit-btn">Login</button>
+                <p class="toggle-text">Don't have an account? <a href="#" onclick="switchToSignup()">Sign Up</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSignupModal()">&times;</span>
+            <h2>Create Your Account</h2>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input type="text" id="signupName" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email Address</label>
+                    <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPhone">Phone Number</label>
+                    <input type="tel" id="signupPhone" placeholder="Enter your phone number" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" placeholder="Create a password" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupConfirmPassword">Confirm Password</label>
+                    <input type="password" id="signupConfirmPassword" placeholder="Confirm password" required>
+                </div>
+                <div class="terms">
+                    <input type="checkbox" id="agreeTerms" required>
+                    <label for="agreeTerms">I agree to Terms & Conditions</label>
+                </div>
+                <button type="submit" class="submit-btn">Sign Up</button>
+                <p class="toggle-text">Already have an account? <a href="#" onclick="switchToLogin()">Login</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <h1>Your Journey Starts Here</h1>
+            <p>Book flights at the best prices</p>
+        </div>
+    </section>
+
+    <!-- Main Search Form -->
+    <div class="container">
+        <div class="search-section">
+            <div class="search-header">
+                <h2>🌍 Make My Trip</h2>
+                <p>Search and book your perfect journey</p>
+            </div>
+
+
+            <!-- Flight Search Form -->
+            <form id="searchForm">
+                <!-- Trip Type -->
+                <div class="trip-type">
+                    <div class="trip-option">
+                        <input type="radio" id="oneway" name="tripType" value="oneway" checked>
+                        <label for="oneway">One-Way</label>
+                    </div>
+                    <div class="trip-option">
+                        <input type="radio" id="roundtrip" name="tripType" value="roundtrip">
+                        <label for="roundtrip">Round Trip</label>
+                    </div>
+                    <div class="trip-option">
+                        <input type="radio" id="multicity" name="tripType" value="multicity">
+                        <label for="multicity">Multi-City</label>
+                    </div>
+                </div>
+
+                <!-- Form Grid -->
+                <div class="form-grid">
+                    <!-- From -->
+                    <div class="form-group">
+                        <label for="fromCity">From</label>
+                        <select id="fromCity" required>
+                            <option value="">Select departure</option>
+                            <option value="DEL">Delhi (DEL)</option>
+                            <option value="MUM">Mumbai (MUM)</option>
+                            <option value="BLR">Bangalore (BLR)</option>
+                            <option value="GOA">Goa (GOA)</option>
+                            <option value="CHE">Chennai (CHE)</option>
+                            <option value="HYD">Hyderabad (HYD)</option>
+                            <option value="JLR">Jaipur (JLR)</option>
+                            <option value="KOL">Kolkata (KOL)</option>
+                        </select>
+                    </div>
+
+                    <!-- To (with swap) -->
+                    <div class="form-group with-swap">
+                        <label for="toCity">To</label>
+                        <div class="select-wrapper">
+                            <select id="toCity" required>
+                                <option value="">Select arrival</option>
+                                <option value="DEL">Delhi (DEL)</option>
+                                <option value="MUM">Mumbai (MUM)</option>
+                                <option value="BLR">Bangalore (BLR)</option>
+                                <option value="GOA">Goa (GOA)</option>
+                                <option value="CHE">Chennai (CHE)</option>
+                                <option value="HYD">Hyderabad (HYD)</option>
+                                <option value="JLR">Jaipur (JLR)</option>
+                                <option value="KOL">Kolkata (KOL)</option>
+                            </select>
+                            <button type="button" class="swap-btn" onclick="swapCities()" title="Swap cities">⇄</button>
+                        </div>
+                    </div>
+
+                    <!-- Departure Date -->
+                    <div class="form-group">
+                        <label for="departDate">Departure</label>
+                        <input type="date" id="departDate" required>
+                    </div>
+
+                    <!-- Return Date -->
+                    <div class="form-group" id="returnDateGroup" style="display: none;">
+                        <label for="returnDate">Return</label>
+                        <input type="date" id="returnDate">
+                    </div>
+
+                    <!-- Passengers & Class -->
+                    <div class="form-group">
+                        <label for="passengers">Passengers</label>
+                        <select id="passengers" required>
+                            <option value="1">1 Adult</option>
+                            <option value="2">2 Adults</option>
+                            <option value="3">3 Adults</option>
+                            <option value="4">4 Adults</option>
+                            <option value="5">5 Adults</option>
+                        </select>
+                    </div>
+
+                    <!-- Class -->
+                    <div class="form-group">
+                        <label for="cabinClass">Class</label>
+                        <select id="cabinClass" required>
+                            <option value="economy">Economy</option>
+                            <option value="premium">Premium</option>
+                            <option value="business">Business</option>
+                            <option value="first">First</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Special Fares Section -->
+                <div class="fares-section">
+                    <label class="section-label">💳 Special Fares</label>
+                    <div class="fares-grid">
+                        <div class="fare-option">
+                            <input type="radio" id="regular" name="fareType" value="regular" checked>
+                            <label for="regular">
+                                <strong>Regular</strong>
+                                <span>Standard Price</span>
+                            </label>
+                        </div>
+                        <div class="fare-option">
+                            <input type="radio" id="student" name="fareType" value="student">
+                            <label for="student">
+                                <strong>Student</strong>
+                                <span>25% OFF + Baggage</span>
+                            </label>
+                        </div>
+                        <div class="fare-option">
+                            <input type="radio" id="armed" name="fareType" value="armed">
+                            <label for="armed">
+                                <strong>Armed Forces</strong>
+                                <span>15% OFF</span>
+                            </label>
+                        </div>
+                        <div class="fare-option">
+                            <input type="radio" id="senior" name="fareType" value="senior">
+                            <label for="senior">
+                                <strong>Senior</strong>
+                                <span>10% OFF</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Services Section -->
+                <div class="services-section">
+                    <label class="section-label">🎁 Add-on Services</label>
+                    <div class="services-grid">
+                        <label class="service-option">
+                            <input type="checkbox" value="insurance">
+                            <span>Travel Insurance <small>+₹99</small></span>
+                        </label>
+                        <label class="service-option">
+                            <input type="checkbox" value="seat">
+                            <span>Seat Selection <small>+₹299</small></span>
+                        </label>
+                        <label class="service-option">
+                            <input type="checkbox" value="meal">
+                            <span>Meal Service <small>+₹199</small></span>
+                        </label>
+                        <label class="service-option">
+                            <input type="checkbox" value="baggage">
+                            <span>Extra Baggage <small>+₹599</small></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Search Button -->
+                <button type="submit" class="search-btn">🔍 Search Flights</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="container">
+        <div class="results-section" id="resultsSection">
+            <div class="results-header">
+                <h2>✈️ Flight Results</h2>
+                <button class="modify-search-btn" onclick="modifySearch()">Modify Search</button>
+            </div>
+
+            <div class="results-filters" id="resultsFilters">
+                <div class="filter-group">
+                    <label for="sortBy">Sort by:</label>
+                    <select id="sortBy">
+                        <option value="none">Best Match</option>
+                        <option value="priceAsc">Price: Low to High</option>
+                        <option value="priceDesc">Price: High to Low</option>
+                        <option value="durationAsc">Duration: Shortest</option>
+                        <option value="stopsAsc">Stops: Fewest</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="filterNonStop">
+                        Non-stop only
+                    </label>
+                </div>
+                <div class="filter-group">
+                    <label>Airlines:</label>
+                    <div class="airline-filters" id="airlineFilters"></div>
+                </div>
+                <button id="clearFiltersBtn" class="clear-filters-btn">Clear Filters</button>
+            </div>
+
+            <div id="resultsInfo" class="results-info"></div>
+            <div id="flightsList"></div>
+        </div>
+    </div>
+
+    <!-- My Bookings Section -->
+    <div class="container">
+        <div class="bookings-section" id="bookingsSection" style="display: none;">
+            <div class="results-header">
+                <h2>📅 My Bookings</h2>
+                <button class="modify-search-btn" onclick="backToSearch()">← Back to Search</button>
+            </div>
+            <div id="bookingsList"></div>
+        </div>
+    </div>
+
+    <!-- Destinations Carousel Section -->
+    <section class="destinations-section" id="destinations">
+        <div class="container">
+            <h2 class="section-title">🌍 Popular Destinations</h2>
+            <div class="carousel-container">
+                <button class="carousel-btn prev" onclick="scrollCarousel(-1)">❮</button>
+                <div class="carousel-wrapper">
+                    <div class="carousel" id="destinationCarousel">
+                        <div class="carousel-item" onclick="selectDestination('Goa')">
+                            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop" alt="Goa">
+                            <h3>Goa 🏖️</h3>
+                            <p>Beach Paradise</p>
+                            <span class="price">From ₹4,000</span>
+                        </div>
+                        <div class="carousel-item" onclick="selectDestination('Mumbai')">
+                            <img src="https://images.unsplash.com/photo-1502933691298-84fc14542831?w=300&h=300&fit=crop" alt="Mumbai">
+                            <h3>Mumbai 🏙️</h3>
+                            <p>City of Dreams</p>
+                            <span class="price">From ₹3,500</span>
+                        </div>
+                        <div class="carousel-item" onclick="selectDestination('Bangalore')">
+                            <img src="https://images.unsplash.com/photo-1512453694671-c5e75f97d539?w=300&h=300&fit=crop" alt="Bangalore">
+                            <h3>Bangalore 💻</h3>
+                            <p>IT Hub</p>
+                            <span class="price">From ₹3,800</span>
+                        </div>
+                        <div class="carousel-item" onclick="selectDestination('Jaipur')">
+                            <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=300&h=300&fit=crop" alt="Jaipur">
+                            <h3>Jaipur 🏛️</h3>
+                            <p>Pink City</p>
+                            <span class="price">From ₹2,800</span>
+                        </div>
+                        <div class="carousel-item" onclick="selectDestination('Chennai')">
+                            <img src="https://images.unsplash.com/photo-1506752926975-30d18d8bbfe5?w=300&h=300&fit=crop" alt="Chennai">
+                            <h3>Chennai 🐚</h3>
+                            <p>Temple City</p>
+                            <span class="price">From ₹3,200</span>
+                        </div>
+                        <div class="carousel-item" onclick="selectDestination('Hyderabad')">
+                            <img src="https://images.unsplash.com/photo-1518855519410-dde860cdca6d?w=300&h=300&fit=crop" alt="Hyderabad">
+                            <h3>Hyderabad 🕌</h3>
+                            <p>Pearl City</p>
+                            <span class="price">From ₹2,900</span>
+                        </div>
+                        <div class="carousel-item" onclick="selectDestination('Kolkata')">
+                            <img src="https://images.unsplash.com/photo-1488844251646-629c5a62f85e?w=300&h=300&fit=crop" alt="Kolkata">
+                            <h3>Kolkata 🎭</h3>
+                            <p>Cultural Hub</p>
+                            <span class="price">From ₹3,100</span>
+                        </div>
+                        <div class="carousel-item" onclick="selectDestination('Delhi')">
+                            <img src="https://images.unsplash.com/photo-1518548419970-58e73c2c3dba?w=300&h=300&fit=crop" alt="Delhi">
+                            <h3>Delhi 🏰</h3>
+                            <p>Capital City</p>
+                            <span class="price">From ₹2,500</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-btn next" onclick="scrollCarousel(1)">❯</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Routes Quick Book -->
+    <section class="popular-routes">
+        <div class="container">
+            <h2 class="section-title">🛫 Quick Book Popular Routes</h2>
+            <div class="routes-grid">
+                <div class="route-card" onclick="quickSearch('DEL', 'GOA')">
+                    <h3>Delhi → Goa</h3>
+                    <p>From ₹4,000</p>
+                </div>
+                <div class="route-card" onclick="quickSearch('DEL', 'MUM')">
+                    <h3>Delhi → Mumbai</h3>
+                    <p>From ₹3,500</p>
+                </div>
+                <div class="route-card" onclick="quickSearch('MUM', 'BLR')">
+                    <h3>Mumbai → Bangalore</h3>
+                    <p>From ₹3,000</p>
+                </div>
+                <div class="route-card" onclick="quickSearch('DEL', 'BLR')">
+                    <h3>Delhi → Bangalore</h3>
+                    <p>From ₹3,800</p>
+                </div>
+                <div class="route-card" onclick="quickSearch('MUM', 'GOA')">
+                    <h3>Mumbai → Goa</h3>
+                    <p>From ₹2,500</p>
+                </div>
+                <div class="route-card" onclick="quickSearch('DEL', 'JLR')">
+                    <h3>Delhi → Jaipur</h3>
+                    <p>From ₹2,200</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Offers Banner -->
+    <section class="offers-banner">
+        <div class="container">
+            <h2>🎉 Exclusive Offers & Deals</h2>
+            <div class="offers-grid">
+                <div class="offer-card">
+                    <h3>🎫 FLAT 20% OFF</h3>
+                    <p>On all flights this week</p>
+                    <small>Code: FLYOFF20</small>
+                </div>
+                <div class="offer-card">
+                    <h3>🏨 BUY1 GET1</h3>
+                    <p>On hotel bookings</p>
+                    <small>Limited time offer</small>
+                </div>
+                <div class="offer-card">
+                    <h3>💳 CASHBACK</h3>
+                    <p>₹500 on every booking</p>
+                    <small>Use selected cards</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Travel Tips Section -->
+    <section class="tips-section">
+        <div class="container">
+            <h2 class="section-title">✈️ Travel Tips & Guides</h2>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <div class="tip-icon">🎒</div>
+                    <h3>Smart Packing</h3>
+                    <p>Pack light, roll clothes, use compression bags to maximize space.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">🕐</div>
+                    <h3>Arrive Early</h3>
+                    <p>Arrive 2-3 hours before flights for hassle-free check-in.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">🛂</div>
+                    <h3>Documents Ready</h3>
+                    <p>Keep ID, passport, and travel documents easily accessible.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">💳</div>
+                    <h3>Money Management</h3>
+                    <p>Carry some cash and inform your bank about international travel.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">🏨</div>
+                    <h3>Hotel Booking</h3>
+                    <p>Book hotels near public transport and popular attractions.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon">📸</div>
+                    <h3>Travel Photography</h3>
+                    <p>Capture memories responsibly, respect local culture and privacy.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+        <div class="container">
+            <h2 class="section-title">❓ Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What is the baggage allowance for students?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Students get an extra 10kg baggage allowance on top of the standard baggage. This is part of our student special fares which also includes a 25% discount on ticket prices. Valid student ID is required at check-in.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What discounts do armed forces personnel get?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Armed forces personnel get a 15% discount on all flights, plus priority boarding and faster check-in. Valid military ID is required at the counter. This applies to active personnel and veterans with proper documentation.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Are senior citizens eligible for discounts?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! Senior citizens (60+ years) receive a 10% discount on all fares. There is also complimentary assistance available for boarding and deplaning. A valid ID proof with date of birth is required at check-in.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What is the cancellation policy?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Full refund if cancelled 7 days before departure. 50% refund for cancellations between 3-7 days. No refund within 72 hours of departure. However, you can modify your flight up to 24 hours before departure for a nominal fee.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How do I book a multi-city flight?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Select the 'Multi-City' option in our booking form. You can then add multiple legs of your journey. For each leg, specify your departure and arrival cities along with the date. You'll get the best prices for combined bookings.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What payment methods are accepted?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We accept all major credit cards, debit cards, net banking, and digital wallets like Google Pay, Apple Pay, and Paytm. Payment is secure and encrypted. You'll receive a confirmation email immediately after successful payment.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can I change my flight after booking?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, you can change your flight up to 24 hours before departure. A nominal fee of ₹500-1000 applies depending on availability and price difference. Changes can be made online through your booking confirmation or by contacting customer service.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is travel insurance available?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Travel insurance is optional and can be purchased during checkout. It covers medical emergencies, trip cancellations, and lost baggage. Insurance premiums start from ₹99 per trip. We recommend it for international flights.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How do I track my booking?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Log into your FlightBook account using your email and password. You can view all your bookings, check flight status, and manage your reservations from the "My Bookings" section. You'll also receive real-time updates via SMS and email.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How can I contact customer support?</span>
+                        <span class="faq-toggle">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our customer support team is available 24/7 through multiple channels. Call us at +91-9876-543-210, email support@flightbook.com, or use the live chat feature on our website. We typically respond within 5 minutes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h2 style="margin-bottom: 30px; color: #2196F3;">✈️ FlightBook - Your Travel Companion</h2>
+
+            <div class="footer-info">
+                <div>
+                    <h4>✈️ About Us</h4>
+                    <p>FlightBook is India's leading online travel platform offering flights, hotels, packages, and more at unbeatable prices.</p>
+                </div>
+                <div>
+                    <h4>Quick Links</h4>
+                    <a href="#home">Home</a>
+                    <a href="#destinations">Destinations</a>
+                    <a href="#faq">FAQ</a>
+                </div>
+                <div>
+                    <h4>Support</h4>
+                    <a href="tel:+919876543210">📞 +91-9876-543-210</a>
+                    <a href="mailto:support@flightbook.com">📧 support@flightbook.com</a>
+                    <p>Available 24/7</p>
+                </div>
+                <div>
+                    <h4>Policies</h4>
+                    <a href="#">Terms & Conditions</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Refund Policy</a>
+                    <a href="#">Contact Us</a>
+                </div>
+                <div>
+                    <h4>Follow Us</h4>
+                    <a href="#">Facebook</a>
+                    <a href="#">Twitter</a>
+                    <a href="#">Instagram</a>
+                    <a href="#">LinkedIn</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 FlightBook. All rights reserved. | Book with confidence | Best prices guaranteed!</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Debug Section - View LocalStorage Data -->
+    <div id="debugSection" style="display: none; background: #f5f5f5; padding: 20px; margin: 20px; border-radius: 8px; border: 2px solid #FF9800;">
+        <h3 style="margin-top: 0; color: #003580;">🔍 LocalStorage Debug Info</h3>
+        <div style="background: white; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 12px; max-height: 300px; overflow-y: auto;">
+            <div><strong>📝 Registered Users:</strong></div>
+            <div id="debugUsers" style="margin-left: 10px; margin-bottom: 15px; white-space: pre-wrap;">Loading...</div>
+
+            <div><strong>👤 Current Logged-In User:</strong></div>
+            <div id="debugCurrentUser" style="margin-left: 10px; margin-bottom: 15px; white-space: pre-wrap;">Loading...</div>
+
+            <div><strong>📅 Your Bookings:</strong></div>
+            <div id="debugBookings" style="margin-left: 10px; margin-bottom: 15px; white-space: pre-wrap;">Loading...</div>
+        </div>
+        <button onclick="closeDebugSection()" style="margin-top: 10px; padding: 8px 16px; background: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer;">Close Debug</button>
+        <button onclick="clearAllLocalStorage()" style="margin-top: 10px; margin-left: 10px; padding: 8px 16px; background: #f44336; color: white; border: none; border-radius: 4px; cursor: pointer;">Clear All Data</button>
+    </div>
+
+    <!-- Button to open debug panel (for development) -->
+    <button id="debugBtn" onclick="showDebugSection()" style="position: fixed; bottom: 20px; right: 20px; padding: 10px 12px; background: #003580; color: white; border: none; border-radius: 50%; cursor: pointer; font-size: 16px; z-index: 999; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">🔍</button>
+
+    <script src="flight-booking.js"></script>
+</body>
+</html>
